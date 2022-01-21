@@ -1,0 +1,80 @@
+import { SpinBox, Button, StandardButton, ComboBox, Slider, LineEdit, HorizontalBox, VerticalBox, GridBox } from "sixtyfps_widgets.60";
+
+GLSAWXCode := Window {
+    title: "小程序二维码生成工具";
+    icon: @image-url("images/logo.png");
+    width: 800px;
+    height: 500px;
+    default-font-size: 14px;
+
+    callback gen-qrcode(string, string);
+    callback save-qrcode();
+
+    property <string> message;
+    property <bool> show-qrcode;
+    property <image> qrcode;
+
+    VerticalBox{
+        HorizontalBox {
+            Image {
+                height: 34px; width: 34px;
+                source: @image-url("images/arrow.png");
+                image-fit: cover;
+            }
+            Text {
+                text: "小程序二维码生成工具";
+                font-size: 24px;
+                color: black;
+            }
+        }
+        HorizontalBox {
+            text-edit := LineEdit {
+                placeholder-text: "输入小程序页面路径";
+                text: "pages/mine/discountPage/discountPage?scene=$3D13";
+            }
+            size-box := ComboBox{
+                width: 120px;
+                height: 50px;
+                model: ["320*320", "430*430", "500*500", "600*600", "700*700", "800*800", "900*900", "1000*1000"];
+                current-value: "430*430";
+                preferred-height: 60px;
+            }
+            btn := Button {
+                text: "生成二维码";
+                enabled: text-edit.text != "";
+                clicked => {
+                    gen-qrcode(text-edit.text, size-box.current-value);
+                }
+            }
+        }
+        HorizontalLayout {
+            alignment: center;
+            VerticalLayout {
+                alignment: center;
+                visible: root.show-qrcode;
+                Image {
+                    height: 300px;
+                    width: 300px;
+                    source: root.qrcode;
+                    image-fit: cover;
+                }
+                Button {
+                    text: "保存二维码";
+                    clicked => {
+                        save-qrcode();
+                    }
+                }
+            }
+        }
+    }
+    HorizontalLayout {
+        visible: !root.show-qrcode;
+        y: 200px;
+        alignment: center;
+        tip-text := Text {
+            text: root.message;
+            color: lightgray;
+            font-size: 40px;
+        }
+    }
+}
