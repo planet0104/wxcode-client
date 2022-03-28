@@ -14,7 +14,6 @@ native-dialog = "0.6.3"
 dirs = "4.0.0"
 
 [build-dependencies]
-sixtyfps-build = "0.1.5"
 embed-resource = "1.6.5"
 
 [profile.release]
