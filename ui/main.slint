@@ -1,15 +1,18 @@
-import { SpinBox, Button, StandardButton, ComboBox, Slider, LineEdit, HorizontalBox, VerticalBox, GridBox } from "sixtyfps_widgets.60";
+import { SpinBox, Button, StandardButton, ComboBox, Slider, LineEdit, HorizontalBox, VerticalBox, GridBox } from "std-widgets.slint";
 
-GLSAWXCode := Window {
-    title: "小程序二维码生成工具";
+WXCode := Window {
+    title: app_name;
     icon: @image-url("images/logo.png");
-    width: 800px;
+    width: 900px;
     height: 500px;
     default-font-size: 14px;
 
-    callback gen-qrcode(string, string);
-    callback save-qrcode();
+    // path, scene, size, type
+    callback gen-qrcode(string, string, string, int);
+    callback save-qrcode(image);
 
+    property <string> app_name;
+    property <string> def_url;
     property <string> message;
     property <bool> show-qrcode;
     property <image> qrcode;
@@ -22,28 +25,39 @@ GLSAWXCode := Window {
                 image-fit: cover;
             }
             Text {
-                text: "小程序二维码生成工具";
+                text: "小程序码生成工具";
                 font-size: 24px;
                 color: black;
+            }
+            type-box := ComboBox{
+                width: 145px;
+                model: ["小程序码", "小程序二维码"];
+                current-index: 0;
+                current-value: "小程序码";
             }
         }
         HorizontalBox {
             text-edit := LineEdit {
                 placeholder-text: "输入小程序页面路径";
-                text: "pages/mine/discountPage/discountPage?scene=$3D13";
+                text: def_url;
+            }
+            scene-edit := LineEdit {
+                width: 150px;
+                placeholder-text: "输入scene";
+                text: "$3D13";
             }
             size-box := ComboBox{
                 width: 120px;
                 height: 50px;
-                model: ["320*320", "430*430", "500*500", "600*600", "700*700", "800*800", "900*900", "1000*1000"];
+                model: ["320*320", "430*430", "500*500", "600*600", "700*700", "800*800"];
                 current-value: "430*430";
                 preferred-height: 60px;
             }
             btn := Button {
-                text: "生成二维码";
+                text: "生成";
                 enabled: text-edit.text != "";
                 clicked => {
-                    gen-qrcode(text-edit.text, size-box.current-value);
+                    gen-qrcode(text-edit.text, scene-edit.text, size-box.current-value, type-box.current-index);
                 }
             }
         }
@@ -61,7 +75,7 @@ GLSAWXCode := Window {
                 Button {
                     text: "保存二维码";
                     clicked => {
-                        save-qrcode();
+                        save-qrcode(root.qrcode);
                     }
                 }
             }
